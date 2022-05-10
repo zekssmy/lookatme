@@ -271,5 +271,4 @@ dependencies:
     - shapely==1.8.0
     - wurlitzer==3.0.2
     - xlrd==1.2.0
-prefix: /home/dmitrii/anaconda3/envs/work
 
