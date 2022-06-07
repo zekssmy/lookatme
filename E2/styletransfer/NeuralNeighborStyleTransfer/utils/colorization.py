@@ -6,9 +6,9 @@ import torch
 import torch.nn.functional as F
 
 # Internal Project Imports
-from utils.imagePyramid import syn_lap_pyr as syn_pyr
-from utils.imagePyramid import dec_lap_pyr as dec_pyr
-from utils.zca import zca_tensor
+from .imagePyramid import syn_lap_pyr as syn_pyr
+from .imagePyramid import dec_lap_pyr as dec_pyr
+from .zca import zca_tensor
 
 def linear_2_oklab(x):
     """Converts pytorch tensor 'x' from Linear to OkLAB colorspace, described here:

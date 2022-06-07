@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 
 # Internal Project Imports
-from utils.misc import scl_spatial
+from .misc import scl_spatial
 
 def get_feat_norms(x):
     """ Makes l2 norm of x[i,:,j,k] = 1 for all i,j,k. Clamps before sqrt for

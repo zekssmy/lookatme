@@ -7,13 +7,13 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 # Internal Project Imports
-from utils.imagePyramid import syn_lap_pyr as syn_pyr
-from utils.imagePyramid import dec_lap_pyr as dec_pyr
-from utils.distance import pairwise_distances_l2, pairwise_distances_cos_center
-from utils.featureExtract import extract_feats, get_feat_norms
-from utils import misc
-from utils.misc import to_device, flatten_grid, scl_spatial
-from utils.colorization import color_match
+from .imagePyramid import syn_lap_pyr as syn_pyr
+from .imagePyramid import dec_lap_pyr as dec_pyr
+from .distance import pairwise_distances_l2, pairwise_distances_cos_center
+from .featureExtract import extract_feats, get_feat_norms
+from . import misc
+from .misc import to_device, flatten_grid, scl_spatial
+from .colorization import color_match
 
 def produce_stylization(content_im, style_im, phi,
                         max_iter=350,
