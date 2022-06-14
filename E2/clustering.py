@@ -12,12 +12,13 @@ from sklearn.decomposition import PCA
 # for everything else
 import os
 import numpy as np
-import pandas as pd
+import json
 
 def cluster(path):
     portraits = []
     data = {}
     groups = {}
+    json_groups = {}
 
     # read metadata
     os.chdir(path)
@@ -51,11 +52,12 @@ def cluster(path):
             groups[cluster].append(file)
         else:
             groups[cluster].append(file)
-            pd.DataFrame(data={'object': portraits, 'cluster_Nr.': kmeans.labels_})
 
-    print(groups)
+    json_groups = json.dumps(groups, skipkeys=True)
 
-    return groups
+    # print(groups)
+
+    return json_groups
 
 def extract_features_cluster(file, model):
     img = load_img(file, target_size=(224, 224))
