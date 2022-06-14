@@ -6,10 +6,10 @@ from imageio import imwrite
 import torch
 import numpy as np
 
-from NeuralNeighborStyleTransfer.pretrained.vgg import Vgg16Pretrained
-from NeuralNeighborStyleTransfer.utils import misc as misc
-from NeuralNeighborStyleTransfer.utils.misc import load_path_for_pytorch
-from NeuralNeighborStyleTransfer.utils.stylize import produce_stylization
+from E2.styletransfer.NeuralNeighborStyleTransfer.pretrained.vgg import Vgg16Pretrained
+from E2.styletransfer.NeuralNeighborStyleTransfer.utils import misc as misc
+from E2.styletransfer.NeuralNeighborStyleTransfer.utils.misc import load_path_for_pytorch
+from E2.styletransfer.NeuralNeighborStyleTransfer.utils.stylize import produce_stylization
 
 ROOT_PATH = os.getcwd()
 INPUT_CONTENT_PATH = os.path.join(ROOT_PATH, "NeuralNeighborStyleTransfer", "inputs", "content")
@@ -33,6 +33,25 @@ def setup():
     random.seed(0)
     np.random.seed(0)
     torch.manual_seed(0)
+
+# Used to imitate the functionality of execute one
+def execute_one_stub(content_im_name,
+                style_im_name,
+                max_iter=50,
+                lr=2e-3,
+                half=True,
+                high_res=False,
+                cpu=False,
+                no_flip=False,
+                content_loss=False,
+                dont_colorize=False,
+                alpha=0.75
+                ):
+    content_path = os.path.join(INPUT_CONTENT_PATH, content_im_name)
+    style_path = os.path.join(INPUT_STYLE_PATH, style_im_name)
+    output_path = os.path.join(OUTPUT_PATH, content_im_name + "_styled.jpg")
+    time.sleep(5)
+    return output_path
 
 
 def execute_one(content_im_name,
@@ -111,6 +130,7 @@ def execute_one(content_im_name,
 
     from IPython.display import Image
     Image(output_path)
+    return output_path
 
 
 

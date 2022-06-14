@@ -1,14 +1,25 @@
 import React, { Component } from "react";
 import { Modal, Button, Carousel, Col, Row, Container } from "react-bootstrap";
 
+function getStyleTransfer(input, style){
+    fetch(`/getstyletransfer/${input}/${style}`)
+      .then(function (response) {
+          return response.text();
+      }).then(function (text) {
+          console.log('GET response text:');
+          console.log(text);
+      });
+}
+
 class Matcher extends Component {
 
     state = {
         isOpen: false
     };
 
-    openModal = () => this.setState({ isOpen: true });
+    openModal = () => this.setState({ isOpen: true }, () => {getStyleTransfer('input.png', 'style.png')});
     closeModal = () => this.setState({ isOpen: false });
+
 
     render() {
         return (
