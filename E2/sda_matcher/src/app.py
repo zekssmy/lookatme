@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 @app.route('/getstyletransfer/<input>/<style>', methods=['GET', 'POST'])
-def data_get(input, style):
+def get_style_transfer(input, style):
     output_path = execute_one_stub(input, style) # execute_one_stub for imitation of functionality of execute_one!!!
     if request.method == 'POST':  # POST request
         print(request.get_text())  # parse as text
@@ -18,7 +18,7 @@ def data_get(input, style):
 """ 
 Stub for clustering
 @app.route('/getclustering/<input>', methods=['GET', 'POST'])
-def data_get2(input):
+def get_clustering(input):
     #output = similariy(input)
     if request.method == 'POST':  # POST request
         print(request.get_text())  # parse as text
