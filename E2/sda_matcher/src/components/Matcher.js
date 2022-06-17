@@ -1,27 +1,79 @@
-import React, { Component } from "react";
-import { Modal, Button, Carousel, Col, Row, Container } from "react-bootstrap";
+import React, { Component, useState } from "react";
+import { Modal, Button, Carousel, Col, Row, Container, Form } from "react-bootstrap";
 
-function getStyleTransfer(input, style){
+function getStyleTransfer(input, style) {
     fetch(`/getstyletransfer/${input}/${style}`)
-      .then(function (response) {
-          return response.text();
-      }).then(function (text) {
-          console.log('GET response text:');
-          console.log(text);
-      });
+        .then(function (response) {
+            return response.text();
+        }).then(function (text) {
+            console.log('GET response text:');
+            console.log(text);
+        });
+}
+
+function download(obj, file, reader) {
+    const imageUrl = `/download/${file}`;
+    var myImage = document.querySelector('#input');
+    fetch(imageUrl)
+      .then(response => response.blob())
+      .then(imageBlob => {
+          // Then create a local URL for that image and print it
+          const imageObjectURL = URL.createObjectURL(imageBlob);
+
+          reader.readAsDataURL(imageBlob);
+          obj.setState({ profileImg: reader.result })
+          //myImage.src = imageObjectURL
+          /*
+          var reader = new FileReader();
+          reader.readAsDataURL(imageBlob);
+
+
+          reader.onloadend = function() {
+              var base64data = reader.result;
+              console.log(base64data);
+          }
+          console.log("Before setState")
+
+          //reader.readAsDataURL(imageObjectURL)
+          console.log(imageObjectURL);
+
+           */
+  });
 }
 
 class Matcher extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            isOpen: false,
+            show: false,
+            profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
+
+        };
+    }
+
     state = {
-        isOpen: false
+        isOpen: false,
+        profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
+
     };
 
-    openModal = () => this.setState({ isOpen: true }, () => {getStyleTransfer('input.png', 'style.png')});
+    handleClose = () => this.setState({ show: false });
+
+    handleShow = () => this.setState({ show: true },  () => { 
+        //var filename = getStyleTransfer('input.png', 'style.png'); 
+        var filename = "input.png_styled.jpg"
+        const reader = new FileReader();
+        download(this, filename, reader)});
+
+    openModal = () => this.setState({ isOpen: true }, () => { getStyleTransfer('input.png', 'style.png') });
     closeModal = () => this.setState({ isOpen: false });
 
 
     render() {
+        const { profileImg } = this.state
+
         return (
             <>
 
@@ -72,21 +124,35 @@ class Matcher extends Component {
                     <Row className="justify-content-md-center mt-5">
                         <Col xs lg="3"></Col>
                         <Col xs lg="3">
-                            <Button variant="primary" onClick={this.openModal}>Match!</Button>
+                            <Button variant="primary" onClick={this.handleShow}>Match!</Button>
                         </Col>
                         <Col xs lg="3">
                         </Col>
                     </Row>
                 </Container>
-                <Modal show={this.state.isOpen} onHide={this.closeModal}>
+
+                <Modal show={this.state.show} onHide={this.handleClose} animation={false} dialogClassName=".modal-90w">
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal heading</Modal.Title>
+                        <Modal.Title>Modal title</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+
+                    <Modal.Body>One fine body...
+                        <Container>
+                            <Row>
+                                <Col>
+                                    <img src={profileImg} alt="" id="img" className="img" style={{ width: 250, height: 250 }} />
+
+                                </Col>
+                                <Col>
+                                    <img src={profileImg} alt="" id="img" className="img" style={{ width: 250, height: 250 }} />
+
+                                </Col>
+                            </Row>
+                        </Container>
+                    </Modal.Body>
+
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.closeModal}>
-                            Close
-                        </Button>
+                        <Button onClick={this.handleClose}>Close</Button>
                     </Modal.Footer>
                 </Modal>
             </>
