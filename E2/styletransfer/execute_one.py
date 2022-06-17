@@ -49,9 +49,9 @@ def execute_one_stub(content_im_name,
                 ):
     content_path = os.path.join(INPUT_CONTENT_PATH, content_im_name)
     style_path = os.path.join(INPUT_STYLE_PATH, style_im_name)
-    output_path = os.path.join(OUTPUT_PATH, content_im_name + "_styled.jpg")
+    output_name = os.path.join(OUTPUT_PATH, content_im_name + "_styled.jpg")
     time.sleep(5)
-    return output_path
+    return output_name
 
 
 def execute_one(content_im_name,
@@ -130,7 +130,7 @@ def execute_one(content_im_name,
 
     from IPython.display import Image
     Image(output_path)
-    return output_path
+    return content_im_name+"_styled.jpg"
 
 
 
