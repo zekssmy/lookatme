@@ -45,16 +45,17 @@ def get_style_transfer(input, style):
         return output_path
 
 
-"""
+
 @app.route('/getclustering/<path>', methods=['GET', 'POST'])
 def get_clustering(path):
     output = cluster(path)
+    # show the recommended images
     if request.method == 'POST':  # POST request
         print(request.get_text())  # parse as text
         return 'OK', 200
     else:  # GET request
         return output
-    """
+
 
 if __name__ == "__main__":
     app.run()

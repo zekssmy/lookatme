@@ -1,3 +1,6 @@
+# for loading/processing the images
+import json
+
 from keras.preprocessing.image import load_img
 from keras.applications.vgg16 import preprocess_input
 
@@ -12,7 +15,7 @@ from sklearn.decomposition import PCA
 # for everything else
 import os
 import numpy as np
-import json
+import pandas as pd
 
 def cluster(path):
     portraits = []
@@ -31,7 +34,7 @@ def cluster(path):
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
 
     for portrait in portraits:
-        feature = extract_features_cluster(portrait, model)
+        feature = extract_features(portrait, model)
         data[portrait] = feature
 
     filenames = np.array(list(data.keys()))
@@ -45,6 +48,7 @@ def cluster(path):
 
     kmeans = KMeans(random_state=22)
     kmeans.fit(x)
+    centers = kmeans.cluster_centers_
 
     for file, cluster in zip(filenames, kmeans.labels_):
         if cluster not in groups.keys():
@@ -53,19 +57,14 @@ def cluster(path):
         else:
             groups[cluster].append(file)
 
-    json_groups = json.dumps(groups, skipkeys=True)
+    # json_groups = json.dumps(groups, skipkeys=True)
+    # cluster_dic = pd.DataFrame(data={'object': portraits, 'cluster_Nr.': kmeans.labels_}).to_dict()
+    return centers,groups
 
-    # print(groups)
-
-    return json_groups
-
-def extract_features_cluster(file, model):
+def extract_features(file, model):
     img = load_img(file, target_size=(224, 224))
     img = np.array(img)
     reshaped_img = img.reshape(1, 224, 224, 3)
     imgx = preprocess_input(reshaped_img)
     features = model.predict(imgx, use_multiprocessing=True)
     return features
-
-
-
