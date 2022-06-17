@@ -5,7 +5,7 @@ import sys
 from flask import Flask, jsonify, request, render_template, make_response, send_file
 import io
 from E2.styletransfer.execute_one import execute_one, execute_one_stub, OUTPUT_PATH
-#from E2.similarity.clustering import cluster
+from E2.similarity.prediction import prediction
 
 app = Flask(__name__)
 
@@ -48,13 +48,15 @@ def get_style_transfer(input, style):
 
 @app.route('/getclustering/<path>', methods=['GET', 'POST'])
 def get_clustering(path):
-    output = cluster(path)
-    # show the recommended images
+    images = prediction(path)
+    if len(images)>20:
+        images = images[:19]
+    # todo: show the recommended images
     if request.method == 'POST':  # POST request
         print(request.get_text())  # parse as text
         return 'OK', 200
     else:  # GET request
-        return output
+        return images
 
 
 if __name__ == "__main__":
