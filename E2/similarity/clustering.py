@@ -1,4 +1,10 @@
+import os, sys
+ROOT_DIR = os.getcwd()
+print(ROOT_DIR)
 from keras.preprocessing.image import load_img
+#import tensorflow as tf 
+#from tensorflow.keras.utils import load_img
+
 from keras.applications.vgg16 import preprocess_input
 
 # models
@@ -14,7 +20,7 @@ import os
 import numpy as np
 import glo, config
 
-group = glo.get_value('group')
+#group = glo.get_value('group')
 
 groups = {}
 
@@ -66,13 +72,15 @@ def cluster():
 
 def predict(path_pred):
     queries = []
-    f = open("/Users/lenajd/Documents/pythonProject/data_app/kmean.pickle", 'rb')
+    #f = open("/Users/lenajd/Documents/pythonProject/data_app/kmean.pickle", 'rb')
+    model_weights = os.path.join(ROOT_DIR, "E2", "similarity", "kmean.pickle")
+    f = open(model_weights, "rb")
     culster_model = pickle.load(f)
-    os.chdir(path_pred)
-    with os.scandir(path_pred) as files:
-        for file in files:
-            if file.name.endswith('.jpg'):
-                queries.append(file.name)
+    #os.chdir(path_pred)
+    #with os.scandir(path_pred) as files:
+    #    for file in files:
+            #if file.name.endswith('.jpg'):
+    queries.append(path_pred)
     data_pred = {}  # features for queries
 
     model = VGG16()
@@ -91,5 +99,10 @@ def predict(path_pred):
 
 
     f.close()
-
-    return pred
+    groups=cluster()
+    return groups[pred]
+#file_name = os.path.join(ROOT_DIR, "E2", "styletransfer", "NeuralNeighborStyleTransfer", "inputs", "content", "rsz_dima.png")
+#print("FILENAME:")
+#print(file_name)
+#file_name = "/home/uwgdz/tmp/SDAPraktikum/E2/styletransfer/NeuralNeighborStyleTransfer/inputs/style/smf_aug_xxx_01573_003.jpg"
+#predict(file_name)

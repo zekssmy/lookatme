@@ -1,6 +1,7 @@
 # Based on https://towardsdatascience.com/talking-to-python-from-javascript-flask-and-the-fetch-api-e0ef3573c451
 import os.path
 import sys
+import json
 #ROOT_DIR = "/home/uwgdz/tmp/SDAPraktikum"
 ROOT_DIR = os.getcwd()
 sys.path.append(ROOT_DIR)
@@ -9,7 +10,7 @@ DOWNLOAD_DIR = os.path.join(ROOT_DIR, "E2", "styletransfer", "outputs")
 from flask import Flask, jsonify, request, render_template, make_response, send_file
 import io
 from E2.styletransfer.execute_one import execute_one, execute_one_stub, OUTPUT_PATH
-#from E2.similarity.prediction import prediction
+from E2.similarity.prediction import predict
 
 app = Flask(__name__)
 
@@ -55,15 +56,21 @@ def get_style_transfer(input, style):
 
 @app.route('/getclustering/<path>', methods=['GET', 'POST'])
 def get_clustering(path):
-    images = prediction(path)
+    #print("ingetclustering")
+    #print(path)
+    path = os.path.join(UPLOAD_DIR, path)
+    images = predict(path)
+    #images = ["1", "2"]
     if len(images)>20:
         images = images[:19]
-    # todo: show the recommended images
     if request.method == 'POST':  # POST request
         print(request.get_text())  # parse as text
         return 'OK', 200
-    else:  # GET request
-        return images
+    else:
+        print(images)
+        return jsonify({'getclustering': images})
+        #return render_template("getclustering.html", data=json.dumps(images))
+        #return images
 
 
 if __name__ == "__main__":
