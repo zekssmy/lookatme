@@ -15,30 +15,30 @@ function download(obj, file, reader) {
     const imageUrl = `/download/${file}`;
     var myImage = document.querySelector('#input');
     fetch(imageUrl)
-      .then(response => response.blob())
-      .then(imageBlob => {
-          // Then create a local URL for that image and print it
-          const imageObjectURL = URL.createObjectURL(imageBlob);
+        .then(response => response.blob())
+        .then(imageBlob => {
+            // Then create a local URL for that image and print it
+            const imageObjectURL = URL.createObjectURL(imageBlob);
 
-          reader.readAsDataURL(imageBlob);
-          obj.setState({ profileImg: reader.result })
-          //myImage.src = imageObjectURL
-          /*
-          var reader = new FileReader();
-          reader.readAsDataURL(imageBlob);
-
-
-          reader.onloadend = function() {
-              var base64data = reader.result;
-              console.log(base64data);
-          }
-          console.log("Before setState")
-
-          //reader.readAsDataURL(imageObjectURL)
-          console.log(imageObjectURL);
-
-           */
-  });
+            reader.readAsDataURL(imageBlob);
+            obj.setState({ profileImg: reader.result })
+            //myImage.src = imageObjectURL
+            /*
+            var reader = new FileReader();
+            reader.readAsDataURL(imageBlob);
+  
+  
+            reader.onloadend = function() {
+                var base64data = reader.result;
+                console.log(base64data);
+            }
+            console.log("Before setState")
+  
+            //reader.readAsDataURL(imageObjectURL)
+            console.log(imageObjectURL);
+  
+             */
+        });
 }
 
 class Matcher extends Component {
@@ -61,11 +61,12 @@ class Matcher extends Component {
 
     handleClose = () => this.setState({ show: false });
 
-    handleShow = () => this.setState({ show: true },  () => { 
+    handleShow = () => this.setState({ show: true }, () => {
         //var filename = getStyleTransfer('input.png', 'style.png'); 
         var filename = "input.png_styled.jpg"
         const reader = new FileReader();
-        download(this, filename, reader)});
+        download(this, filename, reader)
+    });
 
     openModal = () => this.setState({ isOpen: true }, () => { getStyleTransfer('input.png', 'style.png') });
     closeModal = () => this.setState({ isOpen: false });
@@ -131,22 +132,26 @@ class Matcher extends Component {
                     </Row>
                 </Container>
 
-                <Modal show={this.state.show} onHide={this.handleClose} animation={false} dialogClassName=".modal-90w">
+                <Modal show={this.state.show} onHide={this.handleClose} animation={false} dialogClassName=".modal-90w" style={{display:'flex'}}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal title</Modal.Title>
+                        <Modal.Title>It's a Match!</Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body>One fine body...
+                    <Modal.Body>
                         <Container>
-                            <Row>
-                                <Col>
-                                    <img src={profileImg} alt="" id="img" className="img" style={{ width: 250, height: 250 }} />
+                            <Row className="justify-content-md-center">
+                                <Col md="auto">
+                                    <img src={profileImg} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
 
                                 </Col>
-                                <Col>
-                                    <img src={profileImg} alt="" id="img" className="img" style={{ width: 250, height: 250 }} />
+                                <Col md="auto">
+                                    <img src={profileImg} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
 
                                 </Col>
+                            </Row>
+                            <Row className="mt-5"> 
+                                <Form.Label>Who Am I? An Introduction</Form.Label>
+                                <Form.Control as="text" rows={5} />
                             </Row>
                         </Container>
                     </Modal.Body>
