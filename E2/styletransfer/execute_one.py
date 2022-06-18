@@ -5,16 +5,22 @@ import os
 from imageio import imwrite
 import torch
 import numpy as np
-
+import sys
+#ROOT_PATH = "/home/uwgdz/tmp/SDAPraktikum"
+ROOT_PATH = os.getcwd()
+sys.path.append(ROOT_PATH)
 from E2.styletransfer.NeuralNeighborStyleTransfer.pretrained.vgg import Vgg16Pretrained
 from E2.styletransfer.NeuralNeighborStyleTransfer.utils import misc as misc
 from E2.styletransfer.NeuralNeighborStyleTransfer.utils.misc import load_path_for_pytorch
 from E2.styletransfer.NeuralNeighborStyleTransfer.utils.stylize import produce_stylization
 
-ROOT_PATH = os.getcwd()
-INPUT_CONTENT_PATH = os.path.join(ROOT_PATH, "NeuralNeighborStyleTransfer", "inputs", "content")
-INPUT_STYLE_PATH = os.path.join(ROOT_PATH, "NeuralNeighborStyleTransfer", "inputs", "style")
-OUTPUT_PATH = os.path.join(ROOT_PATH, "outputs")
+#ROOT_PATH = os.getcwd()
+#print(ROOT_PATH)
+#ROOT_PATH = "/home/uwgdz/tmp/SDAPraktikum/E2/styletransfer"
+MODULE_PATH = os.path.join(ROOT_PATH, "E2", "styletransfer")
+INPUT_CONTENT_PATH = os.path.join(MODULE_PATH, "NeuralNeighborStyleTransfer", "inputs", "content")
+INPUT_STYLE_PATH = os.path.join(MODULE_PATH, "NeuralNeighborStyleTransfer", "inputs", "style")
+OUTPUT_PATH = os.path.join(MODULE_PATH, "outputs")
 
 
 def create_path(filepath):
