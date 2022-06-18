@@ -1,5 +1,6 @@
 import json
 import os, sys
+import re
 ROOT_DIR = os.getcwd()
 sys.path.append(ROOT_DIR)
 METADATA = os.path.join(ROOT_DIR, "E2", "similarity", 'smf_codingDaVinci_2022-03-30.json')
@@ -67,5 +68,33 @@ def find_location(query):
                                     result.append(foto['dateiname'])
     return result
 
+def find_age(age):
+    with open(METADATA, "r") as f:
+        portraits = json.load(f)
+    filtered_portraits=[]
+    for portrait in portraits:
+        if regex_matcher(portrait['alter'],age):
+            for foto in portrait['fotos']:
+                if foto['dateiname'] in PORTRAITS:
+                    filtered_portraits.append(foto['dateiname'])
+    return filtered_portraits
+
+def regex_matcher(str,age):
+    if re.search("-",str):
+       range=list(map(int,str.split("-")))
+       if age>=range[0] and age<=range[1]:
+           return True
+    elif str.isdigit():
+        if age is int(str):
+            return True
+    elif str=="späte 50er":
+        if age >= 55 and age <=60:
+            return True
+    else:
+        if 20 <= age <=25:
+            return True
+    return False
+
 print(find_hashtags(['Wein']))
 print(find_location("Karlsruhe"))
+print(find_age(25))
