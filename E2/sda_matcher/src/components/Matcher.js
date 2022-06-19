@@ -86,8 +86,18 @@ var artistList = [{ 'dateiname': 'smf_aug_xxx_01573_003.jpg', 'titel': 'Weiblich
 { 'dateiname': 'smf_aug_xxx_2017-011_003.jpg', 'titel': 'Studie eines italienischen Mädchens', 'anzeigeame': 'Franz Xaver Winterhalter' },
 { 'dateiname': 'smf_aug_xxx_2019-100_002.jpg', 'titel': '"Der Trommler"', 'anzeigeame': 'Anton Küßwieder' }];
 
-function getStyleTransfer(input, style) {
-    fetch(`/getstyletransfer/${input}/${style}`)
+//var backendList = "";
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+function getStyleTransfer(style) {
+    fetch(`/getstyletransfer/${style}`)
         .then(function (response) {
             return response.text();
         }).then(function (text) {
@@ -96,8 +106,8 @@ function getStyleTransfer(input, style) {
         });
 }
 
-function download(obj, file, reader) {
-    const imageUrl = `/download/${file}`;
+function download(obj, reader) {
+    const imageUrl = `/download`;
     var myImage = document.querySelector('#input');
     fetch(imageUrl)
         .then(response => response.blob())
@@ -111,7 +121,7 @@ function download(obj, file, reader) {
             /*
             var reader = new FileReader();
             reader.readAsDataURL(imageBlob);
-  
+
   
             reader.onloadend = function() {
                 var base64data = reader.result;
@@ -128,15 +138,19 @@ function download(obj, file, reader) {
 
 //array mit dateinamen
 function downloadQuery() {
-    fetch(`/downloadquery`)
+    var r = fetch(`/downloadquery`)
         .then(function (response) {
             return response.json()
         })
         .then(function (data) {
-            console.log(data.result)
+            //console.log("DOWNLOAD QUERY FUNCTION")
+            //console.log(data.result)
+
+            //obj.state.backendList = data.result
             return data.result
         }
         )
+    return r
 }
 //array mit dateinamen
 function getClustering(input) {
@@ -162,9 +176,12 @@ class Matcher extends Component {
             show: false,
             profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
             images: null,
-            imagePaths: []
+            imagePaths: [],
+            backendList: [""],
+            matchImage: "",
         };
         this.getAllImagesInList();
+
 
     }
 
@@ -180,20 +197,37 @@ class Matcher extends Component {
         //var filename = getStyleTransfer('input.png', 'style.png'); 
         //this.getAllImagesInList();
         //console.log(images);
-        var filename = "input.png_styled.jpg"
+        //var filename = "input.png_styled.jpg"
+        getStyleTransfer()
         const reader = new FileReader();
-        download(this, filename, reader)
+        download(this, reader)
     });
 
-    openModal = () => this.setState({ isOpen: true }, () => { getStyleTransfer('input.png', 'style.png') });
+    openModal = () => this.setState({ isOpen: true }, () => { getStyleTransfer( 'style.png') });
     closeModal = () => this.setState({ isOpen: false });
 
     getAllImagesInList() {
 
-        artistList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item.dateiname) });
-        //backendList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item.dateiname) })
-        console.log(this.state.imagePaths);
-
+        //artistList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item.dateiname) });
+        downloadQuery(this).then( (result) => {
+            //console.log(result)
+            this.state.backendList = result
+            this.render()
+            console.log("DOWNLOAD QUERY")
+            console.log(this.state.backendList)
+            this.state.backendList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item) })
+            console.log("IMAGE PATHS")
+            console.log(this.state.imagePaths)
+            }
+        //sleep(2000)
+        //backendList = backendList[0]
+        //console.log(this.state.imagePaths);
+        )
+    }
+    handleSelect(index, e) {
+        this.state.matchImage = this.state.backendList[index]
+        console.log("handleSelect")
+        console.log(this.state.matchImage)
     }
 
     render() {
@@ -207,7 +241,7 @@ class Matcher extends Component {
                         <Col xs lg="3">
                         </Col>
                         <Col xs lg="3">
-                            <Carousel>
+                            <Carousel onSelect= {(index, e) => this.handleSelect( index, e)}>
                                 {this.state.imagePaths.map((item, index) => (
                                     <Carousel.Item key={index + ""}>
                                         <img
@@ -247,7 +281,7 @@ class Matcher extends Component {
 
                                 </Col>
                                 <Col md="auto">
-                                    <img src={"/croppedFotos/smf_aug_xxx_2003-173_003.jpg"} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
+                                    <img src={"/croppedFotos/" + this.state.matchImage} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
                                 </Col>
                             </Row>
                             <Row className="mt-5">

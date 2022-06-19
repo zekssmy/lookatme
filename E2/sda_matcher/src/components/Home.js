@@ -183,7 +183,7 @@ class Home extends Component {
         if (this.state.checkedCheckbox == "age") {
             x = "age";
             var ageString = String(this.state.age);
-            console.log(ageString);
+            //console.log(ageString);
             uploadQuery(ageString, x)
         } else if (this.state.checkedCheckbox == "hash") {
             x = "hash";
@@ -191,25 +191,25 @@ class Home extends Component {
                 var hashes = this.state.optionSelected.map(function (elem) {
                     return elem.value;
                 }).join(";");
-                console.log(hashes);
+                //console.log(hashes);
             }
-            uploadQuery(hashes, x)
+            uploadQuery(hashes, "hashtags")
         } else if (this.state.checkedCheckbox == "ort") {
             x = "ort";
             var place = String(this.state.ort);
-            console.log(this.state.ort);
+            //console.log(this.state.ort);
             uploadQuery(place, x)
         } else if (this.state.checkedCheckbox == "clustering") {
             x = "clustering";
             uploadQuery("", x)
         }
 
-        console.log(x);
+        //console.log(x);
 
     });
 
     handleChangePlace = event => {
-        console.log(event.target.value);
+        //console.log(event.target.value);
         this.state.ort = event.target.value;
         this.setState({
             ...this.state,
