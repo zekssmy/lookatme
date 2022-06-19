@@ -185,11 +185,11 @@ class Matcher extends Component {
 
     }
 
-    state = {
+    /*state = {
         isOpen: false,
         profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
 
-    };
+    };*/
 
     handleClose = () => this.setState({ show: false });
 
@@ -235,7 +235,6 @@ class Matcher extends Component {
 
         return (
             <>
-
                 <Container fluid >
                     <Row className="justify-content-md-center mt-5">
                         <Col xs lg="3">
