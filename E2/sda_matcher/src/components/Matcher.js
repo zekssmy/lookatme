@@ -41,9 +41,35 @@ function download(obj, file, reader) {
         });
 }
 
+//array mit dateinamen
+function downloadQuery() {
+    fetch(`/downloadquery`)
+        .then(function (response) {
+            return response.json()
+        })
+        .then(function (data) {
+            console.log(data.result)
+            return data.result
+        }
+        )
+}
+//array mit dateinamen
+function getClustering(input) {
+    fetch(`/getclustering/${input}`)
+        .then(function (response) {
+            return response.json()
+        })
+        .then(function (data) {
+            console.log(data.result)
+            return data.result
+        }
+    )
+}
+
 class Matcher extends Component {
 
     constructor(props) {
+        
         super(props);
         this.state = {
             isOpen: false,
@@ -151,7 +177,10 @@ class Matcher extends Component {
                             </Row>
                             <Row className="mt-5"> 
                                 <Form.Label>Who Am I? An Introduction</Form.Label>
-                                <Form.Control as="text" rows={5} />
+                                {/*<Form.Control as="text" rows={5} />*/}
+                                <p>
+                                    Hi!
+                                </p>
                             </Row>
                         </Container>
                     </Modal.Body>
