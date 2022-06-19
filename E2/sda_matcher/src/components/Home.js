@@ -170,9 +170,11 @@ class Home extends Component {
                             <Container>
                                 <div className="page input-group">
                                     <div className="container">
-                                        <h2 className="heading">Add your Image</h2>
-                                        <div className="img-holder">
+                                        <h2 className="heading" align="left">Add your Image</h2>
+                                        <div className="d-flex align-items-center">
+                                            <div className="img-holder">
                                             <img src={profileImg} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
+                                            </div>
                                         </div>
                                         <input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
                                         <div className="label">
