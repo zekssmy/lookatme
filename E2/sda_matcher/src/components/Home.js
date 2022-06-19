@@ -39,6 +39,7 @@ const Option = (props) => {
         </div>
     );
 };
+
 //query: string alter oder hashtags mit semikolon, querytype: string typ age, location, hashtags, clustering
 function uploadQuery(query, queryType) {
     fetch(`/uploadquery/${query}/${queryType}`)
@@ -51,7 +52,7 @@ function uploadQuery(query, queryType) {
 }
 
 
-function handleClose2() {
+/*function handleClose2() {
     this.setState({ show: false }, () => {
 
         console.log(this.checkBoxChecker());
@@ -61,10 +62,8 @@ function handleClose2() {
             }).join(";");
             console.log(str);
         }
-
-
     })
-};
+};*/
 
 function test() {
     console.log('test');
@@ -74,11 +73,11 @@ function test() {
 class Home extends Component {
 
 
-    state = {
+    /*state = {
         isOpen: false,
         profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
 
-    };
+    };*/
 
     constructor(props) {
         super(props);
@@ -137,9 +136,6 @@ class Home extends Component {
     });
     handleShow = () => this.setState({ show: true });
 
-    openModal = () => this.setState({ isOpen: true });
-    closeModal = () => this.setState({ isOpen: false });
-
     saveModal = () => {
         //upload
     }
@@ -157,7 +153,7 @@ class Home extends Component {
         reader.readAsDataURL(e.target.files[0])
     };
 
-    handleChange = (selected) => {
+    handleChangeHash = (selected) => {
         this.setState({
             optionSelected: selected
         });
@@ -212,18 +208,14 @@ class Home extends Component {
 
     });
 
-    change(event) {
-        this.setState({ value: event.target.value });
-    };
-
-    handleChange = event => {
+    handleChangePlace = event => {
         console.log(event.target.value);
         this.state.ort = event.target.value;
-            this.setState({
-              ...this.state,
-              ort: event.target.value
-            })
-      };
+        this.setState({
+            ...this.state,
+            ort: event.target.value
+        })
+    };
 
     render() {
 
@@ -283,18 +275,18 @@ class Home extends Component {
                                 components={{
                                     Option
                                 }}
-                                onChange={this.handleChange}
+                                onChange={this.handleChangeHash}
                                 allowSelectAll={true}
                                 value={this.state.optionSelected}
                             />
                         </span>
-                        <select id="lang" onChange={(value) => this.state.ort = value} value={this.state.ort}>
+                       {/* <select id="lang" onChange={(value) => this.state.ort = value} value={this.state.ort}>
                             {this.artistPlaces.map((item, index) => (
-                                <option value={item}>{item}</option>
+                                <option value={item} key={index + ""}>{item}</option>
                             ))}
-                        </select>
+                        </select>*/}
                         <div>
-                            <select value={this.state.ort} onChange={this.handleChange}>
+                            <select value={this.state.ort} onChange={this.handleChangePlace}>
                                 {this.artistPlaces.map((option, index) => (
                                     <option key={option} value={option}>
                                         {option}
