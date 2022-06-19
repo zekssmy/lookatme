@@ -106,17 +106,15 @@ export default class Explore extends Component {
 
                     </Col>
                     <Col xs={6}>2 of 3 (wider)
-
-                        <ReactPlayer
-                            className='react-player fixed-bottom'
-                            /*url='videos/result_voice(2).mp4'*/
-                            width='300'
-                            height='300'
-                            controls={true}
-
-                        />
-
-
+                        <Container style={{ width: 300, height: 300 }}>
+                            {/*<ReactPlayer
+                                className='react-player fixed-bottom'
+                                url='videos/result_voice(2).mp4'
+                                width='300'
+                                height='300'
+                                controls={true}
+                            />*/}
+                        </Container>
                     </Col>
                     <Col>3 of 3</Col>
                 </Row>

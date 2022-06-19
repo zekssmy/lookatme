@@ -4,6 +4,7 @@ import Multiselect from 'react-bootstrap-multiselect'
 import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
 import Webcam from "react-webcam";
+import * as NumericInput from "react-numeric-input";
 
 function upload(file) {
     // create form and add file
@@ -38,6 +39,7 @@ const Option = (props) => {
         </div>
     );
 };
+
 //query: string alter oder hashtags mit semikolon, querytype: string typ age, location, hashtags, clustering
 function uploadQuery(query, queryType) {
     fetch(`/uploadquery/${query}/${queryType}`)
@@ -50,15 +52,32 @@ function uploadQuery(query, queryType) {
 }
 
 
+/*function handleClose2() {
+    this.setState({ show: false }, () => {
+
+        console.log(this.checkBoxChecker());
+        if (this.state.optionSelected != null) {
+            var str = this.state.optionSelected.map(function (elem) {
+                return elem.value;
+            }).join(";");
+            console.log(str);
+        }
+    })
+};*/
+
+function test() {
+    console.log('test');
+}
+
 
 class Home extends Component {
 
 
-    state = {
+    /*state = {
         isOpen: false,
         profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
 
-    };
+    };*/
 
     constructor(props) {
         super(props);
@@ -66,7 +85,10 @@ class Home extends Component {
             isOpen: false,
             show: false,
             profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-            optionSelected: null
+            optionSelected: null,
+            checkedCheckbox: 'clustering',
+            age: 20,
+            ort: "Karlsruhe"
         };
     }
 
@@ -103,7 +125,6 @@ class Home extends Component {
 
     handleClose = () => this.setState({ show: false }, () => {
 
-
         if (this.state.optionSelected != null) {
             var str = this.state.optionSelected.map(function (elem) {
                 return elem.value;
@@ -115,10 +136,13 @@ class Home extends Component {
     });
     handleShow = () => this.setState({ show: true });
 
-    openModal = () => this.setState({ isOpen: true });
-    closeModal = () => this.setState({ isOpen: false });
+    saveModal = () => {
+        //upload
+    }
 
     imageHandler = (e) => {
+
+        console.log(this.checkedCheckbox);
         const reader = new FileReader();
         reader.onload = () => {
             if (reader.readyState === 2) {
@@ -129,7 +153,7 @@ class Home extends Component {
         reader.readAsDataURL(e.target.files[0])
     };
 
-    handleChange = (selected) => {
+    handleChangeHash = (selected) => {
         this.setState({
             optionSelected: selected
         });
@@ -153,18 +177,54 @@ class Home extends Component {
         }
     }
 
+    checkForm = () => this.setState({ show: false }, () => {
+        var x = "";
+        console.log(this.state.checkedCheckbox);
+        if (this.state.checkedCheckbox == "age") {
+            x = "age";
+            var ageString = String(this.state.age);
+            console.log(ageString);
+            uploadQuery(ageString, x)
+        } else if (this.state.checkedCheckbox == "hash") {
+            x = "hash";
+            if (this.state.optionSelected != null) {
+                var hashes = this.state.optionSelected.map(function (elem) {
+                    return elem.value;
+                }).join(";");
+                console.log(hashes);
+            }
+            uploadQuery(hashes, x)
+        } else if (this.state.checkedCheckbox == "ort") {
+            x = "ort";
+            var place = String(this.state.ort);
+            console.log(this.state.ort);
+            uploadQuery(place, x)
+        } else if (this.state.checkedCheckbox == "clustering") {
+            x = "clustering";
+            uploadQuery("", x)
+        }
 
+        console.log(x);
+
+    });
+
+    handleChangePlace = event => {
+        console.log(event.target.value);
+        this.state.ort = event.target.value;
+        this.setState({
+            ...this.state,
+            ort: event.target.value
+        })
+    };
 
     render() {
 
         const { profileImg } = this.state
         return (
             <>
-
                 <Container fluid>
                     <Row className="justify-content-md-center mt-5">
                         <Col xs lg="2">
-
                         </Col>
                         <Col xs lg="2">
                             <Container>
@@ -203,7 +263,6 @@ class Home extends Component {
                     </Modal.Header>
 
                     <Modal.Body>
-
                         <span
                             className="d-inline-block"
                             data-toggle="popover"
@@ -218,56 +277,68 @@ class Home extends Component {
                                 components={{
                                     Option
                                 }}
-                                onChange={this.handleChange}
+                                onChange={this.handleChangeHash}
                                 allowSelectAll={true}
                                 value={this.state.optionSelected}
                             />
                         </span>
-                        <Form.Select aria-label="Default select example" size="lg">
-                            <option>Ort</option>
+                       {/* <select id="lang" onChange={(value) => this.state.ort = value} value={this.state.ort}>
                             {this.artistPlaces.map((item, index) => (
-                                <option value="1" key={index + ""}>{item}</option>
+                                <option value={item} key={index + ""}>{item}</option>
                             ))}
-                        </Form.Select>
+                        </select>*/}
+                        <div>
+                            <select value={this.state.ort} onChange={this.handleChangePlace}>
+                                {this.artistPlaces.map((option, index) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <NumericInput className="form-control" id="numInput" min={0} max={150} onChange={(value) => this.state.age = value} />
                         <Form>
                             {
                                 <div key={`inline-radio`} className="mb-3">
                                     <Form.Check
                                         inline
+                                        label="nach Ähnlichkeit"
+                                        name="group1"
+                                        type='radio'
+                                        id={"clustering"}
+                                        onChange={(e) => this.state.checkedCheckbox = "clustering"}
+                                    />
+                                    <Form.Check
+                                        inline
                                         label="nach Hashtags"
                                         name="group1"
                                         type={'radio'}
-                                        id={`inline-radio-1`}
+                                        id={"hash"}
+                                        onChange={(e) => this.state.checkedCheckbox = "hash"}
                                     />
                                     <Form.Check
                                         inline
                                         label="nach Ort"
                                         name="group1"
                                         type={'radio'}
-                                        id={`inline-radio-2`}
-                                    />
-                                    <Form.Check
-                                        inline
-                                        label="nach Ähnlichkeit"
-                                        name="group1"
-                                        type='radio'
-                                        id={`inline-radio-3`}
+                                        id={"ort"}
+                                        onChange={(e) => this.state.checkedCheckbox = "ort"}
                                     />
                                     <Form.Check
                                         inline
                                         label="nach Alter"
                                         name="group1"
                                         type='radio'
-                                        id={`inline-radio-3`}
+                                        id={"age"}
+                                        onChange={(e) => this.state.checkedCheckbox = "age"}
                                     />
                                 </div>
                             }
                         </Form>
                     </Modal.Body>
-
                     <Modal.Footer>
                         <Button onClick={this.handleClose}>Close</Button>
-                        <Button bsstyle="primary" onClick={this.handleClose}>Save changes</Button>
+                        <Button bsstyle="primary" onClick={this.checkForm}>Save changes</Button>
                     </Modal.Footer>
                 </Modal>
             </>

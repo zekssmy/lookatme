@@ -23,7 +23,7 @@ export default class NavbarComp extends Component {
                                 <Nav className="me-auto">
                                     <Nav.Link as={Link} to={"/home"} href="#home">Home</Nav.Link>
                                     <Nav.Link as={Link} to={"/explore"} href="#explore">Explore</Nav.Link>
-                                    <Nav.Link as={Link} to={"/matcher"} href="#link">Matcher</Nav.Link>
+                                    <Nav.Link as={Link} to={"/matcher"} href="#matcher">Matcher</Nav.Link>
                                 </Nav>
                             </Navbar.Collapse>
                         </Container>
