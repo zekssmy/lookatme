@@ -11,6 +11,7 @@ from flask import Flask, jsonify, request, render_template, make_response, send_
 import io
 from E2.styletransfer.execute_one import execute_one, execute_one_stub, OUTPUT_PATH
 from E2.similarity.prediction import predict
+from E2.similarity.filters import find_age, find_location, find_hashtags
 
 app = Flask(__name__)
 
@@ -68,9 +69,41 @@ def get_clustering(path):
         return 'OK', 200
     else:
         print(images)
-        return jsonify({'getclustering': images})
+        return jsonify({'result': images})
         #return render_template("getclustering.html", data=json.dumps(images))
         #return images
+
+
+@app.route('/getage/<query>', methods=['GET', 'POST'])
+def get_age(query):
+    query = int(query)
+    result = find_age(query)
+    if request.method == 'POST':  # POST request
+        print(request.get_text())  # parse as text
+        return 'OK', 200
+    else:  # GET request
+        return jsonify({'result': result})
+
+
+@app.route('/getlocation/<query>', methods=['GET', 'POST'])
+def get_location(query):
+    result = find_location(query)
+    if request.method == 'POST':  # POST request
+        print(request.get_text())  # parse as text
+        return 'OK', 200
+    else:  # GET request
+        return jsonify({'result': result})
+
+
+@app.route('/gethashtags/<query>', methods=['GET', 'POST'])
+def get_hashtags(query):
+    query = query.split(";")
+    result = find_hashtags(query)
+    if request.method == 'POST':  # POST request
+        print(request.get_text())  # parse as text
+        return 'OK', 200
+    else:  # GET request
+        return jsonify({'result':result})
 
 
 if __name__ == "__main__":

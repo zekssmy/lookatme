@@ -79,22 +79,22 @@ def find_age(age):
                     filtered_portraits.append(foto['dateiname'])
     return filtered_portraits
 
-def regex_matcher(str,age):
-    if re.search("-",str):
-       range=list(map(int,str.split("-")))
-       if age>=range[0] and age<=range[1]:
+def regex_matcher(s,age):
+    if re.search("-", s):
+       r=list(map(int, s.split("-")))
+       if (age>=r[0]) and (age<=r[1]):
            return True
-    elif str.isdigit():
-        if age is int(str):
+    elif s.isdigit():
+        if age is int(s):
             return True
-    elif str=="späte 50er":
-        if age >= 55 and age <=60:
+    elif s=="späte 50er":
+        if 55 <= age <=60:
             return True
     else:
         if 20 <= age <=25:
             return True
     return False
 
-print(find_hashtags(['Wein']))
-print(find_location("Karlsruhe"))
-print(find_age(25))
+#print(find_hashtags(['Wein']))
+#print(find_location("Karlsruhe"))
+#print(find_age(25))
