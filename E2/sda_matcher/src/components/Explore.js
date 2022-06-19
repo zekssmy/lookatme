@@ -91,13 +91,13 @@ export default class Explore extends Component {
         return (
 
             <Container fluid>
-                <Row>
-                    Card      <Col style={{ paddingLeft: 0 }}>
+                <Row style={{ paddingLeft: 0, paddingTop: 0 }} className="mt-0 pt-0">
+                    <Col style={{ paddingLeft: 0, paddingTop: 0 }} className="mt-0 pt-0">
 
-                        <Accordion defaultActiveKey="0" flush={true} className="w-100">
+                        <Accordion defaultActiveKey="0" flush={false} className="w-100 mt-0 pt-0">
                             {this.artistList.map((item, index) => (
                                 <Accordion.Item eventKey={index + ""} key={index + ""}>
-                                    <Accordion.Header>{item.titel}</Accordion.Header>
+                                    <Accordion.Header className="mt-0 pt-0" style={{fontSize: 10}}>{item.titel}</Accordion.Header>
                                     <Accordion.Body>
                                         {item.anzeigeame}
                                     </Accordion.Body>

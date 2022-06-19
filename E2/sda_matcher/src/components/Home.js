@@ -257,17 +257,20 @@ class Home extends Component {
                 </Container>
                 <Modal show={this.state.show} onHide={this.handleClose} animation={false}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal title</Modal.Title>
+                        <Modal.Title>Lege dein Profil an</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
+                        <p>Was sind deine Interessen?</p>
                         <span
                             className="d-inline-block"
                             data-toggle="popover"
                             data-trigger="focus"
                             data-content="Please selecet account(s)"
+                            style={{width: '50%'}}
                         >
                             <ReactSelect
+                                className="mt-1 mb-5 lg"
                                 options={this.hashtagList}
                                 isMulti
                                 closeMenuOnSelect={false}
@@ -285,8 +288,10 @@ class Home extends Component {
                                 <option value={item} key={index + ""}>{item}</option>
                             ))}
                         </select>*/}
-                        <div>
-                            <select value={this.state.ort} onChange={this.handleChangePlace}>
+                        <p>Wähle deinen Ort:</p>
+
+                        <div style={{width: '300px'}}>
+                            <select value={this.state.ort} onChange={this.handleChangePlace} className=" mt-1 mb-5">
                                 {this.artistPlaces.map((option, index) => (
                                     <option key={option} value={option}>
                                         {option}
@@ -294,10 +299,15 @@ class Home extends Component {
                                 ))}
                             </select>
                         </div>
-                        <NumericInput className="form-control" id="numInput" min={0} max={150} onChange={(value) => this.state.age = value} />
-                        <Form>
+                        <p>Bitte gib dein Alter an:</p>
+                        <div style={{width: '300px'}}>
+
+                        <NumericInput className="form-control mb-5" id="numInput" min={0} max={150} onChange={(value) => this.state.age = value} />
+                        </div>
+                        <p>Wie sollen deine Vorschläge ausgewählt werden?</p>
+                        <Form className=" mt-5" >
                             {
-                                <div key={`inline-radio`} className="mb-3">
+                                <div key={`inline-radio`} className="mt-1 mb-5">
                                     <Form.Check
                                         inline
                                         label="nach Ähnlichkeit"
