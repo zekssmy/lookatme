@@ -224,13 +224,17 @@ class Home extends Component {
             <>
                 <Container fluid>
                     <Row className="justify-content-md-center mt-5">
+                        <Col xs lg='2'></Col>
+                        <Col xs lg="2"><h2 className="heading" align="center">Add your Image</h2></Col>
+                        <Col xs lg="2"></Col>
+                    </Row>
+                    <Row className="justify-content-md-center mt-5">
                         <Col xs lg="2">
                         </Col>
                         <Col xs lg="2">
                             <Container>
                                 <div className="page input-group">
                                     <div className="container">
-                                        <h2 className="heading" align="left">Add your Image</h2>
                                         <div className="d-flex align-items-center">
                                             <div className="img-holder">
                                             <img src={profileImg} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
