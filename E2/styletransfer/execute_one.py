@@ -62,7 +62,7 @@ def execute_one_stub(content_im_name,
 
 def execute_one(content_im_name,
                 style_im_name,
-                max_iter=50,
+                max_iter=60,
                 lr=2e-3,
                 half=True,
                 high_res=False,
@@ -137,6 +137,4 @@ def execute_one(content_im_name,
     from IPython.display import Image
     Image(output_path)
     return content_im_name+"_styled.jpg"
-
-
 

@@ -52,6 +52,6 @@ def predict(profile_path):
             groups[cluster].append(portrait)
     f.close()
     return groups[pred[0]]
-#file_name = "/home/uwgdz/tmp/SDAPraktikum/E2/styletransfer/NeuralNeighborStyleTransfer/inputs/style/smf_aug_xxx_01573_003.jpg"
+#file_name = "/home/uwgdz/tmp/SDAPraktikum/E2/styletransfer/NeuralNeighborStyleTransfer/inputs/content/rsz_dima.png"
 #print(predict(file_name))
 
