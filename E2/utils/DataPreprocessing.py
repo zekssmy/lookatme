@@ -1,9 +1,14 @@
+"""
+This is for cropping of original pictures.
+"""
 from skimage import io, img_as_float
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 
 rootdir = "/media/dmitrii/ADATA HV611/extracthere/Augustinermuseum - Städtische Museen Freiburg/"
+
+
 def crop_pic(name):
     folder_name = rootdir + "presortedFotos/"
     folder_name_to = rootdir + "croppedFotos/"
