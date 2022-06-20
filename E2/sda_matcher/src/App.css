@@ -48,6 +48,6 @@
 
 
 .modal-dialog {
-  width: 100%;
-  max-width: none !important;
+  width: 70% !important;
+  max-width: 100% !important;
 }
