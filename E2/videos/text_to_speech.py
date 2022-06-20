@@ -14,6 +14,8 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 language = 'de'
 image_folder = r'C:/Users/olaei/OneDrive/Documents/Uni/Master/PSDA/SDAPraktikum/E2/videos/audio_males'
 
+#hobbys/profileare given as hashtags seperated by semicolons
+#this function return a list of hobbys without the hashtags
 def split_hashtags(line):
     hobbys = line.split(';')
     without_hashtags = []
@@ -37,7 +39,8 @@ def count_ands_needed(hobby: array):
 
 
 
-
+#main function of conversion form text to speech
+#result is audio files of all the given images in the list
 def from_json_to_speech(): 
     all_categories = ['alter', 'museum', 'sammlung', 'profil']
     empty = []
@@ -51,8 +54,6 @@ def from_json_to_speech():
         for v in d: 
             for w in v['fotos']:
                 if w['dateiname']  == image:
-                    print('-----------------------')
-                    print(v)
                     hobbys = split_hashtags(v['profil'])  
                     hobby_sentence = count_ands_needed(hobbys)
                     person_details = get_person_details(v)
@@ -74,6 +75,7 @@ def get_person_details(v:dict):
     i = 0
     print(v['person'])
     print(len(v['person']))
+    #iterate over list of dicts in the person entry and retrieve information about the artist and portrayed person
     while i < len(v['person']): 
         try:
             if v ['person'][i]['rolle'].startswith('Künstler'): 
@@ -138,7 +140,6 @@ def get_person_details(v:dict):
         except KeyError:
                 pass        
         i +=  1          
-        #print(data_person)
     #assign 'unbekannt' to all empty keys
     for category in all_categories:
         if category not in data_person:
@@ -155,10 +156,13 @@ def from_json_to_text(all_data:dict):
          {all_data['people']['todesort_p']} gestorben. Momentan bin ich ausgestellt im {all_data['museum']}. Ich wurde gemalt von {all_data['people']['artist']}. 
          Er ist im Jahr {all_data['people']['geburtsdatum_a']} in {all_data['people']['geburtsort_a']} geboren und im Jahr {all_data['people']['todesdatum_a']} gestorben.
          Meine Hobbys sind {all_data['profil']} """
-         #{all_data['profil'][0]} und {all_data['profil'][1]} und {all_data['profil'][2]}
         return text
 
-        
+
+#save given text and image to .wav file, where the name of the file is the same as that of the image
+#True is given in from_json_to_speech() function when this function is called for female voice and 
+# False for male voice
+
 def from_text_to_speech(text, gender: bool, image): 
     if gender == True: 
         print(text)
@@ -184,7 +188,5 @@ def from_text_to_speech(text, gender: bool, image):
 
 
 
-    
-function = from_text_to_speech("Vielen Dank für die Aufmerksamkeit, gibt es Fragen?", False, 'outro')  
+ 
 #function = from_speech_to_text() 
-#function = male_voice()
