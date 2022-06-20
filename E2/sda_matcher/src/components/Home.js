@@ -17,8 +17,6 @@ function upload(file) {
     }).then(function (response) {
         return response.blob();
     }).then(function (blob) {
-        //console.log(blob);  // it slow down video from server
-        //server.src = URL.createObjectURL(blob);
     }).catch(function (err) {
         console.log('Fetch problem: ' + err.message);
     });
@@ -40,7 +38,6 @@ const Option = (props) => {
     );
 };
 
-//query: string alter oder hashtags mit semikolon, querytype: string typ age, location, hashtags, clustering
 function uploadQuery(query, queryType) {
     fetch(`/uploadquery/${query}/${queryType}`)
         .then(function (response) {
@@ -52,32 +49,7 @@ function uploadQuery(query, queryType) {
 }
 
 
-/*function handleClose2() {
-    this.setState({ show: false }, () => {
-
-        console.log(this.checkBoxChecker());
-        if (this.state.optionSelected != null) {
-            var str = this.state.optionSelected.map(function (elem) {
-                return elem.value;
-            }).join(";");
-            console.log(str);
-        }
-    })
-};*/
-
-function test() {
-    console.log('test');
-}
-
-
 class Home extends Component {
-
-
-    /*state = {
-        isOpen: false,
-        profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-
-    };*/
 
     constructor(props) {
         super(props);
@@ -186,22 +158,22 @@ class Home extends Component {
             //console.log(ageString);
             uploadQuery(ageString, x)
         } else if (this.state.checkedCheckbox == "hash") {
-            x = "hash";
+            x = "hashtags";
             if (this.state.optionSelected != null) {
                 var hashes = this.state.optionSelected.map(function (elem) {
                     return elem.value;
                 }).join(";");
                 //console.log(hashes);
             }
-            uploadQuery(hashes, "hashtags")
+            uploadQuery(hashes, x)
         } else if (this.state.checkedCheckbox == "ort") {
-            x = "ort";
+            x = "location";
             var place = String(this.state.ort);
             //console.log(this.state.ort);
             uploadQuery(place, x)
         } else if (this.state.checkedCheckbox == "clustering") {
             x = "clustering";
-            uploadQuery("", x)
+            uploadQuery("noinfo", x)
         }
 
         //console.log(x);
@@ -224,19 +196,23 @@ class Home extends Component {
             <>
                 <Container fluid>
                     <Row className="justify-content-md-center mt-5">
+                        <Col xs lg='2'></Col>
+                        <Col xs lg="2"><h2 className="heading" align="center">Add your Image</h2></Col>
+                        <Col xs lg="2"></Col>
+                    </Row>
+                    <Row className="justify-content-md-center mt-5">
                         <Col xs lg="2">
                         </Col>
                         <Col xs lg="2">
                             <Container>
                                 <div className="page input-group">
                                     <div className="container">
-                                        <h2 className="heading" align="left">Add your Image</h2>
                                         <div className="d-flex align-items-center">
                                             <div className="img-holder">
                                             <img src={profileImg} alt="" id="img" className="img" style={{ width: 300, height: 300 }} />
                                             </div>
                                         </div>
-                                        <input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
+                                        <input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} className="mt-5" />
                                         <div className="label">
                                             <label className="image-upload" htmlFor="input">
                                                 Choose your Photo

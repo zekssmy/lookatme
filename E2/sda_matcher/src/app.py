@@ -1,8 +1,8 @@
-# Based on https://towardsdatascience.com/talking-to-python-from-javascript-flask-and-the-fetch-api-e0ef3573c451
+
 import os.path
 import sys
 import json
-#ROOT_DIR = "/home/uwgdz/tmp/SDAPraktikum"
+
 ROOT_DIR = os.getcwd()
 sys.path.append(ROOT_DIR)
 UPLOAD_DIR = os.path.join(ROOT_DIR, "E2", "styletransfer", "NeuralNeighborStyleTransfer", "inputs", "content")
@@ -13,21 +13,25 @@ from E2.styletransfer.execute_one import execute_one, execute_one_stub, OUTPUT_P
 from E2.similarity.prediction import predict
 from E2.similarity.filters import find_age, find_location, find_hashtags
 
+QUERY = ""
+QUERY_TYPE = ""
+INPUT_FILENAME = ""
+CLUSTERING_QUERY_RESULT=""
+
 app = Flask(__name__)
 
-#ROOT_DIR = "/home/dmitrii/GitHub/SDAPraktikum/"
-#ROOT_DIR = "/pfs/data5/home/kit/stud/uwgdz/SDAPraktikum"
-#ROOT_DIR = "/home/uwgdz/tmp/SDAPraktikum/"
-#sys.path.append(ROOT_DIR)
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
+    global INPUT_FILENAME
     if request.method == 'POST':
         fs = request.files.get('snap')
         if fs:
             print('FileStorage:', fs)
             print('filename:', fs.filename)
+            INPUT_FILENAME = fs.filename
             upload_path = os.path.join(UPLOAD_DIR, str(fs.filename))
+            print("UPLOAD PATH", upload_path)
             fs.save(upload_path)
             return 'Got Snap!'
         else:
@@ -36,22 +40,19 @@ def upload():
     return 'Strange behaviour'
 
 
-@app.route('/download/<filename>')
-def download(filename):
-    #filename = os.path.join(ROOT_DIR + "E2/styletransfer/outputs", filename)
-    #filename_path = "/home/uwgdz/tmp/SDAPraktikum/E2/styletransfer/outputs/" + filename
+@app.route('/download')
+def download():
+    filename = INPUT_FILENAME+"_styled.jpg"
     filename_path = os.path.join(DOWNLOAD_DIR, filename)
+    print("DOWNLOAD STYLE", filename_path)
     return send_file(filename_path, mimetype='image/jpg')
 
 
-@app.route('/getstyletransfer/<input>/<style>', methods=['GET', 'POST'])
-def get_style_transfer(input, style):
-    output_path = execute_one(input, style) # execute_one_stub for imitation of functionality of execute_one!!!
-    if request.method == 'POST':  # POST request
-        print(request.get_text())  # parse as text
-        return 'OK', 200
-    else:  # GET request
-        return output_path
+@app.route('/getstyletransfer/<style>', methods=['GET', 'POST'])
+def get_style_transfer(style):
+    global INPUT_FILENAME
+    output_path = execute_one(INPUT_FILENAME, style)
+    return output_path
 
 
 
@@ -105,6 +106,62 @@ def get_hashtags(query):
     else:  # GET request
         return jsonify({'result':result})
 
+@app.route('/uploadquery/<query>/<queryType>', methods=['GET', 'POST'])
+def upload_query(query, queryType):
+    global QUERY
+    QUERY = query
+    global QUERY_TYPE 
+    QUERY_TYPE = queryType
+    global CLUSTERING_QUERY_RESULT
+    print("UPLOAD QUERY", QUERY, QUERY_TYPE)
+    if QUERY_TYPE == 'clustering':
+        path = os.path.join(UPLOAD_DIR, INPUT_FILENAME)
+        CLUSTERING_QUERY_RESULT = predict(path)
+    if request.method == 'POST':  # POST request
+        print(request.get_text())  # parse as text
+        return 'OK', 200
+    else:  # GET request
+        return 'OK'
+
+@app.route('/downloadquery', methods=['GET', 'POST'])
+def download_query():
+    global QUERY
+    global QUERY_TYPE
+    #print(QUERY, QUERY_TYPE)
+    if QUERY_TYPE == 'age':
+        query = int(QUERY)
+        result = find_age(query)
+    elif QUERY_TYPE == 'location':
+        result = find_location(QUERY)
+    elif QUERY_TYPE == 'hashtags':
+        query = QUERY.split(";")
+        result = find_hashtags(query)
+    elif QUERY_TYPE == 'clustering':
+        result = CLUSTERING_QUERY_RESULT
+    else:
+        result = "error"
+    print("DOWNLOAD QUERY", result)
+    if request.method == 'POST':  # POST request
+        print(request.get_text())  # parse as text
+        return 'OK', 200
+    else:  # GET request
+        return jsonify({'result': result})
+
+
+@app.route('/downloadpic/<filename>')
+def download_pic(filename):
+    filename_path = os.path.join(DOWNLOAD_DIR, filename)
+    return send_file(filename_path, mimetype='image/jpg')
+
+
+@app.route('/getstyletransferanddownload/<style>')
+def get_style_transfer_and_download(style):
+    global INPUT_FILENAME
+    output_path = execute_one(INPUT_FILENAME, style) # execute_one_stub for imitation of functionality of execute_one!!!
+    filename = INPUT_FILENAME+"_styled.jpg"
+    filename_path = os.path.join(DOWNLOAD_DIR, filename)
+    print("DOWNLOAD STYLE", filename_path)
+    return send_file(filename_path, mimetype='image/jpg')
 
 if __name__ == "__main__":
     app.run()

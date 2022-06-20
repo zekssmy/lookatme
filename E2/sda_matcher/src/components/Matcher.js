@@ -2,11 +2,6 @@ import React, { Component, useState } from "react";
 import { Modal, Button, Carousel, Col, Row, Container, Form } from "react-bootstrap";
 
 
-
-
-var images;
-var imagePaths;
-
 var artistList = [{ 'dateiname': 'smf_aug_xxx_01573_003.jpg', 'titel': 'Weibliches Bildnis', 'anzeigeame': 'R. Max Seemann' },
 { 'dateiname': 'smf_aug_xxx_03611_003.jpg', 'titel': 'Selbstbildnis', 'anzeigeame': 'Julius Siegfried Uetz' },
 { 'dateiname': 'smf_aug_xxx_03587_003.jpg', 'titel': 'Brustbild eines jungen Mädchens', 'anzeigeame': 'Julius Siegfried Uetz' },
@@ -86,73 +81,68 @@ var artistList = [{ 'dateiname': 'smf_aug_xxx_01573_003.jpg', 'titel': 'Weiblich
 { 'dateiname': 'smf_aug_xxx_2017-011_003.jpg', 'titel': 'Studie eines italienischen Mädchens', 'anzeigeame': 'Franz Xaver Winterhalter' },
 { 'dateiname': 'smf_aug_xxx_2019-100_002.jpg', 'titel': '"Der Trommler"', 'anzeigeame': 'Anton Küßwieder' }];
 
-//var backendList = "";
+function getStyleTransferAndDownload(style, obj, reader) {
+    fetch(`/getstyletransferanddownload/${style}`)
+        .then(response => response.blob())
+        .then(imageBlob => {
+            console.log("Image Blob")
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            reader.readAsDataURL(imageBlob);
+            obj.setState({ profileImg: reader.result })
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    obj.setState({ profileImg: reader.result })
+                }
+            }
+  });
+}
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
-function getStyleTransfer(style) {
-    fetch(`/getstyletransfer/${style}`)
-        .then(function (response) {
-            return response.text();
-        }).then(function (text) {
-            console.log('GET response text:');
-            console.log(text);
-        });
-}
 
 function download(obj, reader) {
     const imageUrl = `/download`;
-    var myImage = document.querySelector('#input');
     fetch(imageUrl)
         .then(response => response.blob())
         .then(imageBlob => {
             // Then create a local URL for that image and print it
             const imageObjectURL = URL.createObjectURL(imageBlob);
-
             reader.readAsDataURL(imageBlob);
             obj.setState({ profileImg: reader.result })
-            //myImage.src = imageObjectURL
-            /*
-            var reader = new FileReader();
-            reader.readAsDataURL(imageBlob);
-
-  
-            reader.onloadend = function() {
-                var base64data = reader.result;
-                console.log(base64data);
-            }
-            console.log("Before setState")
-  
-            //reader.readAsDataURL(imageObjectURL)
-            console.log(imageObjectURL);
-  
-             */
         });
 }
 
-//array mit dateinamen
+function downloadPic(obj, file, reader) {
+    const imageUrl = `/downloadpic/${file}`;
+    var imageBlobAus;
+    fetch(imageUrl)
+        .then(response => response.blob())
+        .then(imageBlob => {
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            reader.readAsDataURL(imageBlob);
+            obj.setState({ profileImg: reader.result })
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    obj.setState({ profileImg: reader.result })
+                }
+            }
+            imageBlobAus = imageBlob
+        });
+    return imageBlobAus;
+}
+
+
 function downloadQuery() {
     var r = fetch(`/downloadquery`)
         .then(function (response) {
             return response.json()
         })
         .then(function (data) {
-            //console.log("DOWNLOAD QUERY FUNCTION")
-            //console.log(data.result)
-
-            //obj.state.backendList = data.result
             return data.result
         }
         )
     return r
 }
-//array mit dateinamen
+
+
 function getClustering(input) {
     fetch(`/getclustering/${input}`)
         .then(function (response) {
@@ -179,56 +169,57 @@ class Matcher extends Component {
             imagePaths: [],
             backendList: [""],
             matchImage: "",
+            titel: "",
+            anzeigename: ""
         };
         this.getAllImagesInList();
 
 
     }
 
-    /*state = {
-        isOpen: false,
-        profileImg: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-
-    };*/
 
     handleClose = () => this.setState({ show: false });
 
+
     handleShow = () => this.setState({ show: true }, () => {
-        //var filename = getStyleTransfer('input.png', 'style.png'); 
-        //this.getAllImagesInList();
-        //console.log(images);
-        //var filename = "input.png_styled.jpg"
-        getStyleTransfer()
         const reader = new FileReader();
-        download(this, reader)
+        if (this.state.matchImage !== undefined) {
+           getStyleTransferAndDownload(this.state.matchImage, this, reader)
+        }
     });
 
-    openModal = () => this.setState({ isOpen: true }, () => { getStyleTransfer( 'style.png') });
+    openModal = () => this.setState({ isOpen: true });
     closeModal = () => this.setState({ isOpen: false });
 
     getAllImagesInList() {
-
-        //artistList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item.dateiname) });
         downloadQuery(this).then( (result) => {
-            //console.log(result)
             this.state.backendList = result
-            this.render()
+            this.stateChange(result);
             console.log("DOWNLOAD QUERY")
             console.log(this.state.backendList)
             this.state.backendList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item) })
             console.log("IMAGE PATHS")
             console.log(this.state.imagePaths)
             }
-        //sleep(2000)
-        //backendList = backendList[0]
-        //console.log(this.state.imagePaths);
         )
     }
     handleSelect(index, e) {
         this.state.matchImage = this.state.backendList[index]
         console.log("handleSelect")
         console.log(this.state.matchImage)
+        var artist = artistList.find(artist => artist.dateiname === this.state.matchImage);
+        this.state.titel = artist.titel;
+        this.state.anzeigeame = artist.anzeigeame
     }
+
+    stateChange = (f) => {
+    console.log("STATE CHANGE")
+    const list = f;
+    console.log(list)
+    this.setState({
+      backendList: list,
+    });
+  }
 
     render() {
         const { profileImg } = this.state
@@ -238,9 +229,10 @@ class Matcher extends Component {
                 <Container fluid >
                     <Row className="justify-content-md-center mt-5">
                         <Col xs lg="3">
+
                         </Col>
                         <Col xs lg="3">
-                            <Carousel onSelect= {(index, e) => this.handleSelect( index, e)}>
+                            <Carousel interval={null} onSelect= {(index, e) => this.handleSelect( index, e)}>
                                 {this.state.imagePaths.map((item, index) => (
                                     <Carousel.Item key={index + ""}>
                                         <img
@@ -284,15 +276,18 @@ class Matcher extends Component {
                                 </Col>
                             </Row>
                             <Row className="mt-5">
-                                <Form.Label>Who Am I? An Introduction</Form.Label>
+                                <Form.Label>Cool Match!</Form.Label>
                                 <p>
+                                    {this.state.titel}
                                 </p>
+                                <p>{this.state.anzeigeame}</p>
                             </Row>
                         </Container>
                     </Modal.Body>
 
                     <Modal.Footer>
                         <Button onClick={this.handleClose}>Close</Button>
+
                     </Modal.Footer>
                 </Modal>
             </>

@@ -6,7 +6,7 @@ from imageio import imwrite
 import torch
 import numpy as np
 import sys
-#ROOT_PATH = "/home/uwgdz/tmp/SDAPraktikum"
+
 ROOT_PATH = os.getcwd()
 sys.path.append(ROOT_PATH)
 from E2.styletransfer.NeuralNeighborStyleTransfer.pretrained.vgg import Vgg16Pretrained
@@ -14,9 +14,7 @@ from E2.styletransfer.NeuralNeighborStyleTransfer.utils import misc as misc
 from E2.styletransfer.NeuralNeighborStyleTransfer.utils.misc import load_path_for_pytorch
 from E2.styletransfer.NeuralNeighborStyleTransfer.utils.stylize import produce_stylization
 
-#ROOT_PATH = os.getcwd()
-#print(ROOT_PATH)
-#ROOT_PATH = "/home/uwgdz/tmp/SDAPraktikum/E2/styletransfer"
+
 MODULE_PATH = os.path.join(ROOT_PATH, "E2", "styletransfer")
 INPUT_CONTENT_PATH = os.path.join(MODULE_PATH, "NeuralNeighborStyleTransfer", "inputs", "content")
 INPUT_STYLE_PATH = os.path.join(MODULE_PATH, "NeuralNeighborStyleTransfer", "inputs", "style")
@@ -24,6 +22,11 @@ OUTPUT_PATH = os.path.join(MODULE_PATH, "outputs")
 
 
 def create_path(filepath):
+    """
+    Creates directory if does not exist
+    :param filepath: directory name
+    :return:
+    """
     if not os.path.exists(filepath):
         os.makedirs(filepath)
         print(f'Made {filepath}')
@@ -32,6 +35,10 @@ def create_path(filepath):
 
 
 def setup():
+    """
+    Setup all paths to read and save for the server
+    :return:
+    """
     create_path(INPUT_CONTENT_PATH)
     create_path(INPUT_STYLE_PATH)
     create_path(OUTPUT_PATH)
@@ -40,19 +47,35 @@ def setup():
     np.random.seed(0)
     torch.manual_seed(0)
 
-# Used to imitate the functionality of execute one
-def execute_one_stub(content_im_name,
-                style_im_name,
-                max_iter=50,
-                lr=2e-3,
-                half=True,
-                high_res=False,
-                cpu=False,
-                no_flip=False,
-                content_loss=False,
-                dont_colorize=False,
-                alpha=0.75
+
+def execute_one_stub(
+        content_im_name,
+        style_im_name,
+        max_iter=50,
+        lr=2e-3,
+        half=True,
+        high_res=False,
+        cpu=False,
+        no_flip=False,
+        content_loss=False,
+        dont_colorize=False,
+        alpha=0.75
                 ):
+    """
+    Method stud for :execute_one: for testing without gpu
+    :param content_im_name:
+    :param style_im_name:
+    :param max_iter:
+    :param lr:
+    :param half:
+    :param high_res:
+    :param cpu:
+    :param no_flip:
+    :param content_loss:
+    :param dont_colorize:
+    :param alpha:
+    :return:
+    """
     content_path = os.path.join(INPUT_CONTENT_PATH, content_im_name)
     style_path = os.path.join(INPUT_STYLE_PATH, style_im_name)
     output_name = os.path.join(OUTPUT_PATH, content_im_name + "_styled.jpg")
@@ -62,7 +85,7 @@ def execute_one_stub(content_im_name,
 
 def execute_one(content_im_name,
                 style_im_name,
-                max_iter=50,
+                max_iter=60,
                 lr=2e-3,
                 half=True,
                 high_res=False,
@@ -72,6 +95,22 @@ def execute_one(content_im_name,
                 dont_colorize=False,
                 alpha=0.75
                 ):
+    """
+    Method executes Neural Neighbor Style Transfer for one image.
+    The content and style images are awaited under /styletransfer/NeuralNeighborStyleTransfer/inputs
+    :param content_im_name: input image
+    :param style_im_name: style image
+    :param max_iter: number of iterations
+    :param lr: learning rate
+    :param half: True, if FP16 instead of FP32 should be used
+    :param high_res: True, if resolution should be increased
+    :param cpu: True, if on cpu
+    :param no_flip: flip photo
+    :param content_loss: use content loss
+    :param dont_colorize: do not colorize extra
+    :param alpha: alpha channel
+    :return: file name of output
+    """
     setup()
     content_path = os.path.join(INPUT_CONTENT_PATH, content_im_name)
     style_path = os.path.join(INPUT_STYLE_PATH, style_im_name)
@@ -137,6 +176,4 @@ def execute_one(content_im_name,
     from IPython.display import Image
     Image(output_path)
     return content_im_name+"_styled.jpg"
-
-
 

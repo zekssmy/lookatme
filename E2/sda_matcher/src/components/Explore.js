@@ -6,6 +6,12 @@ import Col from 'react-bootstrap/Col'
 import ReactPlayer from 'react-player'
 
 export default class Explore extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            videoFilePath: ""
+        };
+    }
 
     artistList = [{ 'dateiname': 'smf_aug_xxx_01573_003.jpg', 'titel': 'Weibliches Bildnis', 'anzeigeame': 'R. Max Seemann' },
     { 'dateiname': 'smf_aug_xxx_03611_003.jpg', 'titel': 'Selbstbildnis', 'anzeigeame': 'Julius Siegfried Uetz' },
@@ -86,6 +92,20 @@ export default class Explore extends Component {
     { 'dateiname': 'smf_aug_xxx_2017-011_003.jpg', 'titel': 'Studie eines italienischen Mädchens', 'anzeigeame': 'Franz Xaver Winterhalter' },
     { 'dateiname': 'smf_aug_xxx_2019-100_002.jpg', 'titel': '"Der Trommler"', 'anzeigeame': 'Anton Küßwieder' }];
 
+    handleVideoUpload = (event) => {
+        console.log(event.nativeEvent.explicitOriginalTarget.childNodes[0].data);
+        var titel = event.nativeEvent.explicitOriginalTarget.childNodes[0].data;
+        const artist = this.artistList.find(artist => artist.titel === titel);
+        var dateinameJPG = artist.dateiname;
+        var dateiname = dateinameJPG.split(".")[0];
+        console.log(dateiname);
+        var dateinameMP4 = "./videos/" + dateiname + ".mp4"
+        console.log(dateinameMP4);
+        this.setState({ videoFilePath: dateinameMP4 });
+        //URL.createObjectURL(file)
+
+    };
+
 
     render() {
         return (
@@ -96,8 +116,8 @@ export default class Explore extends Component {
 
                         <Accordion defaultActiveKey="0" flush={false} className="w-100 mt-0 pt-0">
                             {this.artistList.map((item, index) => (
-                                <Accordion.Item eventKey={index + ""} key={index + ""}>
-                                    <Accordion.Header className="mt-0 pt-0" style={{fontSize: 10}}>{item.titel}</Accordion.Header>
+                                <Accordion.Item eventKey={index + ""} key={index + ""} onClick={(item) => this.handleVideoUpload(item)}>
+                                    <Accordion.Header className="mt-0 pt-0" style={{ fontSize: 10 }} onClick={(item) => this.handleVideoUpload(item)}>{item.titel}</Accordion.Header>
                                     <Accordion.Body>
                                         {item.anzeigeame}
                                     </Accordion.Body>
@@ -105,18 +125,20 @@ export default class Explore extends Component {
                         </Accordion>
 
                     </Col>
-                    <Col xs={6}>2 of 3 (wider)
-                        <Container style={{ width: 300, height: 300 }}>
-                            {/*<ReactPlayer
+                    <Col>
+
+                    </Col>
+                    <Col>
+                        <Container style={{ maxWidth: 250, maxHeight: 250, width: 250, height: 250}}>
+                            <ReactPlayer
                                 className='react-player fixed-bottom'
-                                url='videos/result_voice(2).mp4'
-                                width='300'
-                                height='300'
+                                url={this.state.videoFilePath}
+                                width='35%'
+                                height='35%'
                                 controls={true}
-                            />*/}
+                            />
                         </Container>
                     </Col>
-                    <Col>3 of 3</Col>
                 </Row>
             </Container>
         )
