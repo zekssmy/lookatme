@@ -5,7 +5,7 @@ import { Modal, Button, Carousel, Col, Row, Container, Form } from "react-bootst
 
 
 var images;
-var imagePaths;
+var titel;
 
 var artistList = [{ 'dateiname': 'smf_aug_xxx_01573_003.jpg', 'titel': 'Weibliches Bildnis', 'anzeigeame': 'R. Max Seemann' },
 { 'dateiname': 'smf_aug_xxx_03611_003.jpg', 'titel': 'Selbstbildnis', 'anzeigeame': 'Julius Siegfried Uetz' },
@@ -87,7 +87,10 @@ var artistList = [{ 'dateiname': 'smf_aug_xxx_01573_003.jpg', 'titel': 'Weiblich
 { 'dateiname': 'smf_aug_xxx_2019-100_002.jpg', 'titel': '"Der Trommler"', 'anzeigeame': 'Anton Küßwieder' }];
 
 //var backendList = "";
-
+function refreshPage(obj) {
+    obj.getAllImagesInList()
+    //window.location.reload(false);
+  }
 function sleep(milliseconds) {
   var start = new Date().getTime();
   for (var i = 0; i < 1e7; i++) {
@@ -96,46 +99,30 @@ function sleep(milliseconds) {
     }
   }
 }
-function getStyleTransfer(style) {
-    fetch(`/getstyletransfer/${style}`)
-        .then(function (response) {
-            return response.text();
-        }).then(function (text) {
-            console.log('GET response text:');
-            console.log(text);
-        });
-}
+
 
 function download(obj, reader) {
     const imageUrl = `/download`;
-    var myImage = document.querySelector('#input');
     fetch(imageUrl)
         .then(response => response.blob())
         .then(imageBlob => {
             // Then create a local URL for that image and print it
             const imageObjectURL = URL.createObjectURL(imageBlob);
-
             reader.readAsDataURL(imageBlob);
             obj.setState({ profileImg: reader.result })
-            //myImage.src = imageObjectURL
-            /*
-            var reader = new FileReader();
-            reader.readAsDataURL(imageBlob);
-
-  
-            reader.onloadend = function() {
-                var base64data = reader.result;
-                console.log(base64data);
-            }
-            console.log("Before setState")
-  
-            //reader.readAsDataURL(imageObjectURL)
-            console.log(imageObjectURL);
-  
-             */
         });
 }
-
+function downloadPic(obj, file, reader) {
+    const imageUrl = `/downloadpic/${file}`;
+    fetch(imageUrl)
+        .then(response => response.blob())
+        .then(imageBlob => {
+            // Then create a local URL for that image and print it
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            reader.readAsDataURL(imageBlob);
+            obj.setState({ profileImg: reader.result })
+        });
+}
 //array mit dateinamen
 function downloadQuery() {
     var r = fetch(`/downloadquery`)
@@ -179,6 +166,8 @@ class Matcher extends Component {
             imagePaths: [],
             backendList: [""],
             matchImage: "",
+            titel: "",
+            anzeigename: ""
         };
         this.getAllImagesInList();
 
@@ -192,18 +181,56 @@ class Matcher extends Component {
     };*/
 
     handleClose = () => this.setState({ show: false });
+    _fetchDate = async (obj, reader) => {
+                //await this.getStyleTransfer(this.state.matchImage)
+                //download(obj, reader)
+                reader.onload = () => {
+                if (reader.readyState === 2) {
+                    obj.setState({ profileImg: reader.result })
+                }
+        }
+            }
 
     handleShow = () => this.setState({ show: true }, () => {
         //var filename = getStyleTransfer('input.png', 'style.png'); 
         //this.getAllImagesInList();
         //console.log(images);
         //var filename = "input.png_styled.jpg"
-        getStyleTransfer()
         const reader = new FileReader();
-        download(this, reader)
+        if (this.state.matchImage !== undefined) {
+
+
+            //this._fetchDate(this, reader).then(
+                //() => {
+                //    //console.log("STYLE TRANSFER DONE")
+                //    //sleep(5000)
+                //    download(this, reader)
+                //    reader.onload = () => {
+                //        if (reader.readyState === 2) {
+                //    this.setState({ profileImg: reader.result })
+                //}
+                //    }
+                //})
+            //download(this, reader)
+            console.log("STATE MATCH IMAGE")
+            console.log(this.state.matchImage)
+            var filename = "rsz_dima.png" + this.state.matchImage + "_styled.jpg"
+            downloadPic(this, filename, reader)
+            reader.onload = () => {
+                      if (reader.readyState === 2) {
+                    this.setState({ profileImg: reader.result })
+                }
+                    }
+        }
+
+
+        //sleep(10000)
+        //download(this, reader)
+
+        //download(this, reader)
     });
 
-    openModal = () => this.setState({ isOpen: true }, () => { getStyleTransfer( 'style.png') });
+    openModal = () => this.setState({ isOpen: true });
     closeModal = () => this.setState({ isOpen: false });
 
     getAllImagesInList() {
@@ -212,23 +239,64 @@ class Matcher extends Component {
         downloadQuery(this).then( (result) => {
             //console.log(result)
             this.state.backendList = result
-            this.render()
+            this.stateChange(result);
             console.log("DOWNLOAD QUERY")
             console.log(this.state.backendList)
             this.state.backendList.map((item, index) => { this.state.imagePaths.push('./croppedFotos/' + item) })
             console.log("IMAGE PATHS")
             console.log(this.state.imagePaths)
+            //window.location.reload(false)
             }
         //sleep(2000)
         //backendList = backendList[0]
         //console.log(this.state.imagePaths);
         )
+        //window.location.reload(false)
     }
     handleSelect(index, e) {
+        //console.log("HANDALE SELECT")
+        //console.log(this.state.backendList)
         this.state.matchImage = this.state.backendList[index]
+        //this.state.matchImage = this.state.image[index]
         console.log("handleSelect")
         console.log(this.state.matchImage)
+        var artist = artistList.find(artist => artist.dateiname === this.state.matchImage);
+        this.state.titel = artist.titel;
+        this.state.anzeigeame = artist.anzeigeame
     }
+
+    imageHandler = (e) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                this.setState({ profileImg: reader.result })
+            }
+        }
+        //download(this, reader)
+        //reader.readAsDataURL(e.target.files[0])
+    };
+
+    getStyleTransfer(style) {
+        console.log("GET STYLE TRANSFER")
+        fetch(`/getstyletransfer/${style}`)
+        .then(function (response) {
+            return response.text();
+        }).then(function (text) {
+            console.log('GET response text:');
+            console.log(text);
+        });
+    }
+
+    stateChange = (f) => {
+    console.log("STATE CHANGE")
+    const list = f;
+    console.log(list)
+    this.setState({
+      backendList: list,
+    });
+    //document.getElementsByTagName("p")[0].innerHTML = artistList.dateiname(this.state.matchImage).titel;
+
+  }
 
     render() {
         const { profileImg } = this.state
@@ -238,9 +306,10 @@ class Matcher extends Component {
                 <Container fluid >
                     <Row className="justify-content-md-center mt-5">
                         <Col xs lg="3">
+
                         </Col>
                         <Col xs lg="3">
-                            <Carousel onSelect= {(index, e) => this.handleSelect( index, e)}>
+                            <Carousel interval={null} onSelect= {(index, e) => this.handleSelect( index, e)}>
                                 {this.state.imagePaths.map((item, index) => (
                                     <Carousel.Item key={index + ""}>
                                         <img
@@ -284,15 +353,22 @@ class Matcher extends Component {
                                 </Col>
                             </Row>
                             <Row className="mt-5">
-                                <Form.Label>Who Am I? An Introduction</Form.Label>
+                                <Form.Label>Cool Match!</Form.Label>
                                 <p>
+                                    {this.state.titel}
+
+
+                                    {/*{artistList.dateiname(this.state.matchImage).titel}
+                                    {artistList.dateiname(this.state.matchImage).anzeigeame}*/}
                                 </p>
+                                <p>{this.state.anzeigeame}</p>
                             </Row>
                         </Container>
                     </Modal.Body>
 
                     <Modal.Footer>
                         <Button onClick={this.handleClose}>Close</Button>
+
                     </Modal.Footer>
                 </Modal>
             </>
