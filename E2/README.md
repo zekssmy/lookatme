@@ -7,12 +7,30 @@ Our project can be split into three use cases:
 2) Similarity
 3) Exploration
 
- ## Getting Started 
- ### Prerequisites
+## Getting Started 
+### Architecture
+Our Project consists of python python backend (`styletransfer`, `similarity`, `videos`, `utils`), 
+and javascript react bootstrap frontend (`sda_mathcer`). Connection is performed through flask in python and ajax in javascript.
+
+### Prerequisites
+1. Install the environment with conda
+2. Install python flask server on the remote server with GPU
+3. Start app.py on the remote server
+4. Start the tunnel from the server to your local device with 127.0.0.1:5000
+5. Install react and npm on the local device 
+6. Install all dependencies in sdm_matcher using npm
+7. Start the localhost 
 
 
- ### Style Transfer
- Brief explanation of use-case + tools + steps followed to implement a functioning tool
+### Style Transfer
+#### Description
+This is a modification of [Neural Neighbor Style Transfer](https://github.com/nkolkin13/NeuralNeighborStyleTransfer)
+Some modifications are done to perform FP16 iterations on GPU. 
+This modification reduces execution time by factor 2 and the quality remains almost the same.
+
+#### Use
+The interface `execute_one` proposes the method `execute_one(...)` for processing of one image with image style.
+The content and style images are awaited under `/styletransfer/NeuralNeighborStyleTransfer/inputs`
 
  ### Similarity 
  Brief explanation of use-case + tools + steps followed to implement a functioning tool
